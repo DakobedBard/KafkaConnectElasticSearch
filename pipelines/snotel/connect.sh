@@ -1,0 +1,1 @@
+docker exec -it snotel_connect_1_44bb91ac7d71 bash
