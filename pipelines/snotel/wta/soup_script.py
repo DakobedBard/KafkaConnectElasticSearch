@@ -1,11 +1,8 @@
 from urllib.request import urlopen as uReq
 from bs4 import BeautifulSoup as soup
 import datetime
-from snotel.wta.sql_queries import trip_report_table_insert
-import psycopg2
-import os
-
-rds_password = os.environ.get('KALADIN_RDS_PASSWORD')
+from pipelines.snotel.wta.sql_queries import trip_report_table_insert
+from pipelines.snotel.postgresConnection import get_postgres_connection
 
 
 def get_page_soup(page_url):
@@ -43,26 +40,22 @@ def insert_trip_report(conn, trip_report):
     conn.commit()
 
 
-def parse_report_url(report):
-    return str(report).split('href=')[1].split('"')[1]
+def scrape_range(start):
+    conn = get_postgres_connection('snowpackDB', 'snowpack')
 
-
-conn = psycopg2.connect(
-    "host=kaladin-db.cju35raiyeyw.us-west-2.rds.amazonaws.com dbname=kaladindb user=postgres password=%s" % rds_password)
-
-for page_number in range(16000):
-    report_list_url = 'https://www.wta.org/@@search_tripreport_listing?b_size=100&amp;b_start:int=%d&amp;_=1584045459199"' % int(
-        100 * page_number)
-    try:
-        report_list_soup = get_page_soup(report_list_url)
-        reports = report_list_soup.find_all("a", {"class": "listitem-title"})
-        for report in reports:
-            report_url = parse_report_url(report)
-            trip_report = parse_trip_report(report_url)
-            insert_trip_report(conn, trip_report)
-            print("Inserted ")
-            conn.commit()
-    except Exception as e:
-        print("We have a problem with the url at")
-        print(e)
-conn.close()
+    for page_number in range(start,16000):
+        report_list_url = 'https://www.wta.org/@@search_tripreport_listing?b_size=100&amp;b_start:int=%d&amp;_=1584045459199"' % int(
+            100 * page_number)
+        try:
+            report_list_soup = get_page_soup(report_list_url)
+            reports = report_list_soup.find_all("a", {"class": "listitem-title"})
+            for report in reports:
+                report_url = str(report).split('href=')[1].split('"')[1]
+                trip_report = parse_trip_report(report_url)
+                insert_trip_report(conn, trip_report)
+                print("Inserted ")
+                conn.commit()
+        except Exception as e:
+            print("We have a problem with the url at")
+            print(e)
+    conn.close()

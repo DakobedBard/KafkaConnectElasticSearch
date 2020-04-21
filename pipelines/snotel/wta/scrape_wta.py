@@ -4,8 +4,10 @@ import time
 from pipelines.snotel.wta.sql_queries import trip_report_table_insert
 import datetime
 
+
 class TripReport:
-    def __init__(self, trip_name, trip_report, starting_date, ending_date, mileage, elevation_gain, locations, trip_date, ndays = 1):
+    def __init__(self, trip_name, trip_report, starting_date, ending_date, mileage, elevation_gain, locations,
+                 trip_date, ndays=1):
         self.trip_name = trip_name
         self.trip_report = trip_report
         self.mileage = mileage
@@ -24,7 +26,7 @@ def parse_trip_report(url):
     client = uReq(url)
     trip_html = client.read()
     client.close()
-    tripsoup = soup(trip_html,"html.parser")
+    tripsoup = soup(trip_html, "html.parser")
     content = tripsoup.find("article", {"id": "content"})
 
     trip_text = content.find('p').text
@@ -32,21 +34,24 @@ def parse_trip_report(url):
     trip_title = content.find('h1').text
     date = content.find('span', {"class": "elapsed-time"})
     date_string = str(date).split('datetime=')[1].split('"')[1]
-    trip_report= {'title':trip_title, 'region':region, 'trip_report':trip_text, 'date':date_string }
+    trip_report = {'title': trip_title, 'region': region, 'trip_report': trip_text, 'date': date_string}
 
-    report = TripReport(trip_title, trip_text, 0, 0, ['Buck Creek Pass'], datetime.datetime.now(), 1 )
+    report = TripReport(trip_title, trip_text, 0, 0, ['Buck Creek Pass'], datetime.datetime.now(), 1)
 
     return report
+
 
 def get_page_soup(page_url):
     client = uReq(page_url)
     page_html = client.read()
     client.close()
-    page_soup = soup(page_html,"html.parser")
+    page_soup = soup(page_html, "html.parser")
     return page_soup
+
 
 def parse_report_url(report):
     return str(report).split('href=')[1].split('"')[1]
+
 
 def scrape_trip_reports():
     number_of_reports_processed = 0
@@ -54,7 +59,6 @@ def scrape_trip_reports():
         url = 'https://www.wta.org/@@search_tripreport_listing?b_size=100&amp;b_start:int=%d&amp;_=1584045459199"' % int(
             100 * page_number)
         report_dictionaries = []
-        return url
         try:
             page_soup = get_page_soup(url)
             reports = page_soup.find_all("a", {"class": "listitem-title"})
@@ -69,7 +73,6 @@ def scrape_trip_reports():
 
         except Exception as e:
             print("We have a problem with the url at")
-
 
 
 def insert_trip_report(conn, report):
@@ -87,4 +90,3 @@ def insert_trip_report(conn, report):
 
 
 report_dict = scrape_trip_reports()
-

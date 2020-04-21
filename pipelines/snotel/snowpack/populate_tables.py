@@ -1,10 +1,9 @@
 from pipelines.snotel.snowpack.sql_queries import snowpack_table_insert
-from pipelines.snotel.utils.postgresConnection import get_postgres_connection
+from snotel.postgresConnection import get_postgres_connection
 import os
-from datetime import date, timedelta
 from bs4 import BeautifulSoup
 import datetime
-from datetime import date, timedelta
+from datetime import timedelta
 import requests
 
 rds_password = os.environ.get('KALADIN_RDS_PASSWORD')

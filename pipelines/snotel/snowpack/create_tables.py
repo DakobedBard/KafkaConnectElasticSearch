@@ -1,7 +1,7 @@
 from pipelines.snotel.snowpack.run_scraper import extract_snowpack_data
 from pipelines.snotel.snowpack.sql_queries import basin_table_create, basin_aggregate_table_create,\
     snowpack_table_create, location_table_create, basins_table_insert,location_table_insert
-from pipelines.snotel.utils.postgresConnection import get_postgres_connection
+from snotel.postgresConnection import get_postgres_connection
 
 
 conn = get_postgres_connection()
