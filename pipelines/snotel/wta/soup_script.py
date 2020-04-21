@@ -40,10 +40,10 @@ def insert_trip_report(conn, trip_report):
     conn.commit()
 
 
-def scrape_range(start):
+def scrape_range(start,end):
     conn = get_postgres_connection('snowpackDB', 'snowpack')
 
-    for page_number in range(start,16000):
+    for page_number in range(start,end):
         report_list_url = 'https://www.wta.org/@@search_tripreport_listing?b_size=100&amp;b_start:int=%d&amp;_=1584045459199"' % int(
             100 * page_number)
         try:
@@ -59,3 +59,5 @@ def scrape_range(start):
             print("We have a problem with the url at")
             print(e)
     conn.close()
+
+scrape_range(0,5)

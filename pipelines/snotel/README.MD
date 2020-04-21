@@ -2,8 +2,13 @@
 
 Performing streams analysis
 
+curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @connectors/snowpack.json
+
+
 # 
-curl -i -X POST -H  http://localhost:8083/connectors/ -d @connectors/snowpack_connector.json
+
+curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @connectors/snowpack_connector.json
+curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @connectors/inventory.json
 
 Delete a connector
 curl -X DELETE localhost:8083/connectors/customers-connector/product
@@ -20,3 +25,4 @@ SELECT schema_name FROM information_schema.schemata
 
 
 
+curl -i -X POST -H  http://localhost:8083/connectors/ -d @connectors/snowpack_connector.json
