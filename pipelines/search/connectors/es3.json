@@ -1,10 +1,10 @@
 {
-  "name": "es5",
+  "name": "es",
   "config": {
             "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
             "connection.url": "http://elasticsearch7:9200",
             "type.name": "_doc",
-            "topics": "est",
+            "topics": "estopic",
             "key.ignore": "true",
             "schema.ignore": "true"
             }

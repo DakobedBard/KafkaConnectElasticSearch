@@ -1,6 +1,16 @@
 ---
 version: '3'
 services:
+  postgres:
+    image: debezium/example-postgres:${DEBEZIUM_VERSION}
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=snowpackDB
+    container_name: db
+
   zookeeper:
     image: confluentinc/cp-zookeeper:5.4.0-beta1
     container_name: zookeeper
@@ -119,122 +129,6 @@ services:
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
       CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components
 
-  # kafka-connect-531:
-  #   image: confluentinc/cp-kafka-connect:5.3.1
-  #   container_name: kafka-connect-531
-  #   depends_on:
-  #     - zookeeper
-  #     - kafka
-  #     - schema-registry
-  #   ports:
-  #     - 18083:8083
-  #   environment:
-  #     CONNECT_BOOTSTRAP_SERVERS: "kafka:29092"
-  #     CONNECT_REST_PORT: 8083
-  #     CONNECT_GROUP_ID: kafka-connect-531
-  #     CONNECT_CONFIG_STORAGE_TOPIC: _kafka-connect-531-configs
-  #     CONNECT_OFFSET_STORAGE_TOPIC: _kafka-connect-531-offsets
-  #     CONNECT_STATUS_STORAGE_TOPIC: _kafka-connect-531-status
-  #     CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-  #     CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-  #     CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: "false"
-  #     CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
-  #     CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-  #     CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-  #     CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect-01"
-  #     CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO"
-  #     CONNECT_LOG4J_LOGGERS: "org.apache.kafka.connect.runtime.rest=WARN,org.reflections=ERROR"
-  #     CONNECT_LOG4J_APPENDER_STDOUT_LAYOUT_CONVERSIONPATTERN: "[%d] %p %X{connector.context}%m (%c:%L)%n"
-  #     CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: "1"
-  #     CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: "1"
-  #     CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
-  #     CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components
-
-#  kafka-connect-530:
-#    image: confluentinc/cp-kafka-connect:5.3.0
-#    container_name: kafka-connect-530
-#    depends_on:
-#      - zookeeper
-#      - kafka
-#      - schema-registry
-#    ports:
-#      - 28083:8083
-#    environment:
-#      CONNECT_BOOTSTRAP_SERVERS: "kafka:29092"
-#      CONNECT_REST_PORT: 8083
-#      CONNECT_GROUP_ID: kafka-connect-530
-#      CONNECT_CONFIG_STORAGE_TOPIC: _kafka-connect-530-configs
-#      CONNECT_OFFSET_STORAGE_TOPIC: _kafka-connect-530-offsets
-#      CONNECT_STATUS_STORAGE_TOPIC: _kafka-connect-530-status
-#      CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-#      CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-#      CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: "false"
-#      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
-#      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-#      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-#      CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect-01"
-#      CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO"
-#      CONNECT_LOG4J_LOGGERS: "org.apache.kafka.connect.runtime.rest=WARN,org.reflections=ERROR"
-#      CONNECT_LOG4J_APPENDER_STDOUT_LAYOUT_CONVERSIONPATTERN: "[%d] %p %X{connector.context}%m (%c:%L)%n"
-#      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: "1"
-#      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: "1"
-#      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
-#      CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components
-
-  # kafka-connect-522:
-  #   image: confluentinc/cp-kafka-connect:5.2.2
-  #   container_name: kafka-connect-522
-  #   depends_on:
-  #     - zookeeper
-  #     - kafka
-  #     - schema-registry
-  #   ports:
-  #     - 38083:8083
-  #   environment:
-  #     CONNECT_BOOTSTRAP_SERVERS: "kafka:29092"
-  #     CONNECT_REST_PORT: 8083
-  #     CONNECT_GROUP_ID: kafka-connect-522
-  #     CONNECT_CONFIG_STORAGE_TOPIC: _kafka-connect-522-configs
-  #     CONNECT_OFFSET_STORAGE_TOPIC: _kafka-connect-522-offsets
-  #     CONNECT_STATUS_STORAGE_TOPIC: _kafka-connect-522-status
-  #     CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-  #     CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-  #     CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: "false"
-  #     CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
-  #     CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-  #     CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-  #     CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect-01"
-  #     CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO"
-  #     CONNECT_LOG4J_LOGGERS: "org.apache.kafka.connect.runtime.rest=WARN,org.reflections=ERROR"
-  #     CONNECT_LOG4J_APPENDER_STDOUT_LAYOUT_CONVERSIONPATTERN: "[%d] %p %X{connector.context}%m (%c:%L)%n"
-  #     CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: "1"
-  #     CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: "1"
-  #     CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
-  #     CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components
-      
-  # elasticsearch5:
-  #   image: docker.elastic.co/elasticsearch/elasticsearch:5.6.16
-  #   container_name: elasticsearch5
-  #   ports:
-  #     - 9200:9200
-  #   environment:
-  #     xpack.security.enabled: "false"
-  #     ES_JAVA_OPTS: "-Xms1g -Xmx1g"
-  #     discovery.type: "single-node"
-  #   # volumes: 
-  #   #   - ./data/container_data/elasticserarch:/usr/share/elasticsearch/data
-#
-#  elasticsearch6:
-#    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.3
-#    container_name: elasticsearch6
-#    ports:
-#      - 19200:9200
-#    environment:
-#      xpack.security.enabled: "false"
-#      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
-#      discovery.type: "single-node"
-#    # volumes:
-#    #   - ./data/container_data/elasticserarch:/usr/share/elasticsearch/data
 
   elasticsearch7:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
