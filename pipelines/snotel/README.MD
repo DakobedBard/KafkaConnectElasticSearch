@@ -34,3 +34,22 @@ docker cp connectors/confluentinc-kafka-connect-elasticsearch-5.4.1/lib  snotel_
 
 # -> List the available plugins
 curl localhost:8083/connector-plugins/
+
+
+
+
+ES connector 
+
+    "transforms": "unwrap,key",
+    "transforms.unwrap.type": "io.debezium.transforms.UnwrapFromEnvelope",
+    "transforms.key.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
+    "transforms.key.field": "id",
+      "key.ignore": "false",
+    "type.name": "customer",
+
+    "key.converter": "io.confluent.connect.avro.AvroConverter",
+    "key.converter.schema.registry.url": "http://schema-registry:8081",
+    "value.converter": "io.confluent.connect.avro.AvroConverter",
+    "value.converter.schema.registry.url": "http://schema-registry:8081",
+    "schema.ignore": true
+

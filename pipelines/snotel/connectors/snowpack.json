@@ -1,5 +1,5 @@
 {
-  "name": "reports2",
+  "name": "reports",
   "config": {
     "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
     "tasks.max": "1",

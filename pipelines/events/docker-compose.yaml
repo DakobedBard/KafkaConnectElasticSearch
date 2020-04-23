@@ -96,67 +96,74 @@ services:
       CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
 
+  ksql-server:
+    image: ${REPOSITORY}/cp-ksql-server:${TAG}
+    hostname: ksql-server
+    container_name: ksql-server
+    depends_on:
+      - broker
+      - connect
+    ports:
+      - "8088:8088"
+    environment:
+      KSQL_CONFIG_DIR: "/etc/ksql"
+      KSQL_LOG4J_OPTS: "-Dlog4j.configuration=file:/etc/ksql/log4j-rolling.properties"
+      KSQL_BOOTSTRAP_SERVERS: "broker:29092"
+      KSQL_HOST_NAME: ksql-server
+      KSQL_LISTENERS: "http://0.0.0.0:8088"
+      KSQL_CACHE_MAX_BYTES_BUFFERING: 0
+      KSQL_KSQL_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
+      KSQL_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
+      KSQL_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
+      KSQL_KSQL_CONNECT_URL: "http://connect:8083"
 
+  ksql-cli:
+    image: ${REPOSITORY}/cp-ksql-cli:${TAG}
+    container_name: ksql-cli
+    depends_on:
+      - broker
+      - connect
+      - ksql-server
+    entrypoint: /bin/sh
+    tty: true
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.5
+    hostname: elasticsearch
+    container_name: elasticsearch
+    depends_on:
+      - connect
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      xpack.security.enabled: "false"
+      XPACK_SECURITY_ENABLED: "false"
+      xpack.monitoring.enabled: "false"
 
-
-
-
-
-  # This "container" is a workaround to pre-create topics
-
-#  elasticsearch:
-#    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.5
-#    hostname: elasticsearch
-#    container_name: elasticsearch
-#    depends_on:
-#      - connect
-#    ports:
-#      - "9200:9200"
-#      - "9300:9300"
-#    environment:
-#      xpack.security.enabled: "false"
-#      XPACK_SECURITY_ENABLED: "false"
-#      xpack.monitoring.enabled: "false"
-#
-#  kibana:
-#    image: docker.elastic.co/kibana/kibana:5.5.2
-#    #image: kibana:5.5.2
-#    hostname: kibana
-#    container_name: kibana
-#    depends_on:
-#      - elasticsearch
-#    ports:
-#      - "5601:5601"
-#    environment:
-#      xpack.security.enabled: "false"
-#      XPACK_SECURITY_ENABLED: "false"
-#      xpack.monitoring.enabled: "false"
-#      discovery.type: "single-node"
-#      elasticsearch.url: http://elasticsearch:9200
-#      server.host: "0.0.0.0"
-#      SERVER_HOST: "0.0.0.0"
-#      server.name: "kibana"
-#      SERVER_NAME: "kibana"
-#      XPACK_GRAPH_ENABLED: "false"
-#      XPACK_MONITORING_ENABLED: "false"
-#      XPACK_REPORTING_ENABLED: "false"
-#    command: [ "/bin/bash", "-c", "/usr/share/kibana/bin/kibana-plugin remove x-pack; /usr/local/bin/kibana-docker" ]
-#
-#
-#  sqlite:
-#    image: sqlite:latest
-#    build:
-#      context: ../utils/
-#      dockerfile: Dockerfile
-#    hostname: sqlite
-#    container_name: sqlite
-#    stdin_open: true
-#    tty: true
-#    volumes:
-#      - $PWD/../utils/table.customers:/db/table.customers
-#      - $PWD/../utils/customers.sql:/db/customers.sql
-#      - mi4:/db/
+  kibana:
+    image: docker.elastic.co/kibana/kibana:5.5.2
+    #image: kibana:5.5.2
+    hostname: kibana
+    container_name: kibana
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5601:5601"
+    environment:
+      xpack.security.enabled: "false"
+      XPACK_SECURITY_ENABLED: "false"
+      xpack.monitoring.enabled: "false"
+      discovery.type: "single-node"
+      elasticsearch.url: http://elasticsearch:9200
+      server.host: "0.0.0.0"
+      SERVER_HOST: "0.0.0.0"
+      server.name: "kibana"
+      SERVER_NAME: "kibana"
+      XPACK_GRAPH_ENABLED: "false"
+      XPACK_MONITORING_ENABLED: "false"
+      XPACK_REPORTING_ENABLED: "false"
+    command: [ "/bin/bash", "-c", "/usr/share/kibana/bin/kibana-plugin remove x-pack; /usr/local/bin/kibana-docker" ]
 
 volumes:
     mi4: {}
